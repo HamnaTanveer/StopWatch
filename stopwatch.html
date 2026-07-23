@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stopwatch</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --peach: #ffd6ba;
+    --nude: #ffb4a2;
+    --pink: #ff8fab;
+    --red: #e63950;
+    --cream: #fff1e6;
+    --ink: #5a2a35;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:24px;
+    font-family:'Quicksand', sans-serif;
+    background: linear-gradient(135deg, var(--peach) 0%, var(--nude) 50%, var(--red) 100%);
+    color: var(--ink);
+  }
+
+  .container{
+    width:100%;
+    max-width:320px;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 32px 26px;
+    border-radius: 28px;
+    text-align:center;
+    border: 1px solid rgba(255,255,255,0.6);
+    box-shadow:
+      0 20px 45px rgba(230, 57, 80, 0.25),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+
+  h2{
+    font-family:'Fredoka', sans-serif;
+    font-weight:600;
+    letter-spacing: 0.5px;
+    margin: 0 0 18px;
+    font-size: 24px;
+    color: var(--red);
+    text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+  }
+
+  .clock{
+    width: 200px;
+    height: 200px;
+    margin: 6px auto 20px;
+    border-radius: 50%;
+    position: relative;
+    background: radial-gradient(circle at 35% 30%, #fff, var(--cream) 40%, var(--nude) 100%);
+    box-shadow:
+      0 12px 30px rgba(230, 57, 80, 0.35),
+      inset 0 -6px 14px rgba(230, 57, 80, 0.18),
+      inset 0 6px 10px rgba(255,255,255,0.9);
+  }
+
+  .tick{
+    position:absolute;
+    width: 3px;
+    height: 10px;
+    background: rgba(230, 57, 80, 0.35);
+    left: 50%;
+    top: 6px;
+    transform-origin: 50% 94px;
+    border-radius: 2px;
+  }
+
+  .needle{
+    width: 4px;
+    height: 78px;
+    background: linear-gradient(var(--red), var(--pink));
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    margin-left: -2px;
+    transform-origin: 50% 78px;
+    transform: rotate(0deg);
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(230, 57, 80, 0.6);
+    transition: transform 0.15s linear;
+  }
+
+  .center-dot{
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(var(--pink), var(--red));
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    box-shadow: 0 0 6px rgba(230, 57, 80, 0.5);
+  }
+
+  .time{
+    margin: 4px 0 22px;
+    font-family:'Fredoka', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--red);
+    text-shadow: 0 2px 8px rgba(230, 57, 80, 0.25);
+  }
+
+  .buttons{
+    display:flex;
+    justify-content:center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  button{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family:'Quicksand', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, var(--pink), var(--red));
+    box-shadow: 0 8px 18px rgba(230, 57, 80, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  }
+
+  button:hover{
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 10px 22px rgba(230, 57, 80, 0.45);
+    filter: brightness(1.05);
+  }
+
+  button:active{
+    transform: translateY(0) scale(0.98);
+  }
+
+  button.reset{
+    background: linear-gradient(135deg, #fff, var(--peach));
+    color: var(--red);
+  }
+
+  @media (max-width: 380px){
+    .container{ padding: 26px 18px; max-width: 280px; }
+    .clock{ width: 170px; height: 170px; }
+    .time{ font-size: 24px; letter-spacing: 2px; }
+    button{ padding: 9px 16px; font-size: 13px; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>⏱ Stopwatch</h2>
+
+  <div class="clock" id="clock">
+    <div class="needle" id="needle"></div>
+    <div class="center-dot"></div>
+  </div>
+
+  <div class="time" id="time">00 : 00 : 00</div>
+
+  <div class="buttons">
+    <button onclick="startWatch()">Start</button>
+    <button onclick="stopWatch()">Stop</button>
+    <button class="reset" onclick="resetWatch()">Reset</button>
+  </div>
+</div>
+
+<script>
+  //  tick marks around the dial
+  const clock = document.getElementById('clock');
+  for(let i=0;i<12;i++){
+    const tick = document.createElement('div');
+    tick.className = 'tick';
+    tick.style.transform = 'rotate(' + (i*30) + 'deg)';
+    clock.insertBefore(tick, clock.firstChild);
+  }
+
+  let hr = 0;
+  let min = 0;
+  let sec = 0;
+  let running = false;
+  let angle = 0;
+  let timer = null;
+
+  function startWatch() {
+    if (running === false) {
+      running = true;
+      updateWatch();
+    }
+  }
+
+  function stopWatch() {
+    if (running === true) {
+      running = false;
+      clearTimeout(timer);
+      timer = null;
+    }
+  }
+
+  function resetWatch() {
+    running = false;
+    clearTimeout(timer);
+    timer = null;
+    hr = 0;
+    min = 0;
+    sec = 0;
+    angle = 0;
+    document.getElementById("time").innerHTML = "00 : 00 : 00";
+    document.getElementById("needle").style.transform = "rotate(0deg)";
+  }
+
+  function updateWatch() {
+    if (running === true) {
+      sec++;
+
+      if (sec === 60) {
+        sec = 0;
+        min++;
+      }
+
+      if (min === 60) {
+        min = 0;
+        hr++;
+      }
+
+      document.getElementById("time").innerHTML =
+        format(hr) + " : " + format(min) + " : " + format(sec);
+
+      angle += 6;
+      document.getElementById("needle").style.transform = "rotate(" + angle + "deg)";
+
+      timer = setTimeout(updateWatch, 1000);
+    }
+  }
+
+  function format(num) {
+    return num < 10 ? "0" + num : num;
+  }
+</script>
+
+</body>
+</html>
